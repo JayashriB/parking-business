@@ -6,6 +6,7 @@ import { ParkingSession } from './entities/parking-session.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ParkingSession])],
+  exports: [TypeOrmModule],
   controllers: [ParkingSessionController],
   providers: [ParkingSessionService],
 })

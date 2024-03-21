@@ -1,29 +1,43 @@
-import {Entity, Column, PrimaryGeneratedColumn, PrimaryColumn} from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  Index,
+} from 'typeorm';
 import { VehicalType } from '../model/enum';
+import { ParkingSession } from '../../parking-session/entities/parking-session.entity';
 
 @Entity()
+@Index(['buildingNumber', 'floorNumber', 'spaceNumber'], { unique: true })
 export class ParkingSpace {
-    @PrimaryGeneratedColumn("uuid")
-    id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: number;
 
-    @PrimaryColumn()
-    buildingNumber: number;
+  @Column()
+  buildingNumber: number;
 
-    @PrimaryColumn()
-    floorNumber: number;
+  @Column()
+  floorNumber: number;
 
-    @PrimaryColumn()
-    spaceNumber: number;
+  @Column()
+  spaceNumber: number;
 
-    @Column()
-    occupied: boolean;
+  @Column()
+  occupied: boolean;
 
-    @Column({
-        type: "enum",
-        enum: VehicalType,
-    })
-    vehicalType: VehicalType;
+  @Column({
+    type: 'enum',
+    enum: VehicalType,
+  })
+  vehicalType: VehicalType;
 
-    @Column()
-    residenceParking: boolean;
+  @Column()
+  isResidenceParking: boolean;
+
+  @OneToMany(
+    () => ParkingSession,
+    (parkingSession) => parkingSession.parkingSpace,
+  )
+  parkingSessions: ParkingSession[];
 }

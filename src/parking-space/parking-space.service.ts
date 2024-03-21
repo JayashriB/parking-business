@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateParkingSpaceDto } from './dto/create-parking-space.dto';
 import { UpdateParkingSpaceDto } from './dto/update-parking-space.dto';
+import { Repository } from 'typeorm';
+import { ParkingSpace } from './entities/parking-space.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ParkingSpaceService {
+  constructor(
+    @InjectRepository(ParkingSpace)
+    private parkingSpaceRepository: Repository<ParkingSpace>,
+  ) {}
+
   create(createParkingSpaceDto: CreateParkingSpaceDto) {
     return 'This action adds a new parkingSpace';
   }

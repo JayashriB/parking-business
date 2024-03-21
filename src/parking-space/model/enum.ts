@@ -1,5 +1,5 @@
 export enum VehicalType {
-    MOTOR = "Motorcycle",
-    CAR   = "Car",
-    ANY   = "Any"
+  MOTOR = 'Motorcycle',
+  CAR = 'Car',
+  ANY = 'Any',
 }

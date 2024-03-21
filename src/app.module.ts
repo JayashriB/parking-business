@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+//import { DataSource } from 'typeorm';
 import { ParkingSpaceModule } from './parking-space/parking-space.module';
 import { ParkingSpace } from './parking-space/entities/parking-space.entity';
 import { ParkingSessionModule } from './parking-session/parking-session.module';
@@ -9,22 +9,22 @@ import { ParkingSession } from './parking-session/entities/parking-session.entit
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'mysql',
       host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
+      port: 3306,
+      username: 'jazz',
+      password: 'jazz',
       database: 'parking',
       entities: [ParkingSpace, ParkingSession],
       synchronize: true,
+      dropSchema: true,
     }),
     ParkingSpaceModule,
-    ParkingSessionModule
+    ParkingSessionModule,
   ],
   controllers: [],
   providers: [],
 })
-
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  //constructor(private dataSource: DataSource) {}
 }
