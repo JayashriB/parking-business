@@ -1,0 +1,25 @@
+version: '3.7'
+services: 
+  postgres:
+    container_name: postgres_db
+    image: postgres
+    restart: always
+    environment: 
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=parking
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./sql/create-database.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    ports: 
+      - '5332:5432'
+    
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - '5050:80'
