@@ -9,10 +9,7 @@ import { Repository, DataSource } from 'typeorm';
 import { ParkingSession } from './entities/parking-session.entity';
 import { ParkingSpace } from './entities/parking-space.entity';
 import { ParkingCharges } from './entities/parking-charges.entity';
-import {
-  Category,
-  vehicleTypeToCategoryMap,
-} from './model/enum';
+import { Category, vehicleTypeToCategoryMap } from './model/enum';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 
@@ -79,8 +76,7 @@ export class ParkingSessionService {
         `Checkout: parking session ${parkingSessionId} has already ended`,
       );
 
-    const { isResidenceParking, id: parkingSpaceId } =
-      activeParkingSession.parkingSpace;
+    const { isResidenceParking, id } = activeParkingSession.parkingSpace;
 
     const vehicleChargeCategory = isResidenceParking
       ? Category.RESIDENT
@@ -100,6 +96,7 @@ export class ParkingSessionService {
       activeParkingSession.sessionEndDate = parkingEndTime;
       activeParkingSession.charges = charge;
       await entityManager.save(ParkingSession, activeParkingSession);
+      await entityManager.update(ParkingSpace, { id }, { occupied: false });
     });
   }
 
