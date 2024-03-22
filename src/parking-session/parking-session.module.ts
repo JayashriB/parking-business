@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ParkingSessionService } from './parking-session.service';
 import { ParkingSessionController } from './parking-session.controller';
 import { ParkingSession } from './entities/parking-session.entity';
-import { ParkingSpace } from '../parking-space/entities/parking-space.entity';
-import { ParkingCharges } from '../parking-space/entities/parking-charges.entity';
+import { ParkingSpace } from './entities/parking-space.entity';
+import { ParkingCharges } from './entities/parking-charges.entity';
 
 @Module({
   imports: [

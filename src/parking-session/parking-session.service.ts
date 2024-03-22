@@ -7,12 +7,12 @@ import { CheckInDto } from './dto/check-in.dto';
 import { CheckOutDto } from './dto/check-out.dto';
 import { Repository, DataSource } from 'typeorm';
 import { ParkingSession } from './entities/parking-session.entity';
-import { ParkingSpace } from '../parking-space/entities/parking-space.entity';
-import { ParkingCharges } from '../parking-space/entities/parking-charges.entity';
+import { ParkingSpace } from './entities/parking-space.entity';
+import { ParkingCharges } from './entities/parking-charges.entity';
 import {
   Category,
   vehicleTypeToCategoryMap,
-} from '../parking-space/model/enum';
+} from './model/enum';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 

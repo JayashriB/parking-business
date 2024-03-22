@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-//import { DataSource } from 'typeorm';
-import { ParkingSpaceModule } from './parking-space/parking-space.module';
-import { ParkingSpace } from './parking-space/entities/parking-space.entity';
-import { ParkingCharges } from './parking-space/entities/parking-charges.entity';
+import { ParkingSpace } from './parking-session/entities/parking-space.entity';
+import { ParkingCharges } from './parking-session/entities/parking-charges.entity';
 import { ParkingSessionModule } from './parking-session/parking-session.module';
 import { ParkingSession } from './parking-session/entities/parking-session.entity';
 
@@ -19,7 +17,6 @@ import { ParkingSession } from './parking-session/entities/parking-session.entit
       entities: [ParkingSpace, ParkingSession, ParkingCharges],
       synchronize: true,
     }),
-    ParkingSpaceModule,
     ParkingSessionModule,
   ],
   controllers: [],

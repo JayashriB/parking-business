@@ -5,7 +5,7 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-import { ParkingSession } from '../../parking-session/entities/parking-session.entity';
+import { ParkingSession } from './parking-session.entity';
 
 @Entity()
 @Index(['buildingNumber', 'floorNumber', 'spaceNumber'], { unique: true })
