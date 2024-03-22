@@ -1,45 +1,19 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { ParkingSessionService } from './parking-session.service';
-import { CreateParkingSessionDto } from './dto/create-parking-session.dto';
-import { UpdateParkingSessionDto } from './dto/update-parking-session.dto';
+import { CheckInDto } from './dto/check-in.dto';
+import { CheckOutDto } from './dto/check-out.dto';
 
-@Controller('parking-session')
+@Controller('/')
 export class ParkingSessionController {
   constructor(private readonly parkingSessionService: ParkingSessionService) {}
 
-  @Post()
-  create(@Body() createParkingSessionDto: CreateParkingSessionDto) {
-    return this.parkingSessionService.create(createParkingSessionDto);
+  @Post('check-in')
+  checkIn(@Body() checkInDto: CheckInDto) {
+    return this.parkingSessionService.checkIn(checkInDto);
   }
 
-  @Get()
-  findAll() {
-    return this.parkingSessionService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.parkingSessionService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateParkingSessionDto: UpdateParkingSessionDto,
-  ) {
-    return this.parkingSessionService.update(+id, updateParkingSessionDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.parkingSessionService.remove(+id);
+  @Post('check-out')
+  checkOut(@Body() checkOutDto: CheckOutDto) {
+    return this.parkingSessionService.checkOut(checkOutDto);
   }
 }

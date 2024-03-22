@@ -17,7 +17,6 @@ import { ParkingSession } from './parking-session/entities/parking-session.entit
       database: 'parking',
       entities: [ParkingSpace, ParkingSession],
       synchronize: true,
-      dropSchema: true,
     }),
     ParkingSpaceModule,
     ParkingSessionModule,
@@ -25,6 +24,4 @@ import { ParkingSession } from './parking-session/entities/parking-session.entit
   controllers: [],
   providers: [],
 })
-export class AppModule {
-  //constructor(private dataSource: DataSource) {}
-}
+export class AppModule {}

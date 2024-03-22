@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { ParkingSpace } from '../../parking-space/entities/parking-space.entity';
 
 @Entity()
@@ -6,16 +12,13 @@ export class ParkingSession {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @Column()
-  sessionId: string;
-
-  @Column()
+  @CreateDateColumn()
   sessionStartDate: Date;
 
-  @Column()
-  sessionEndDate: Date;
+  @Column({ default: null })
+  sessionEndDate: Date | null;
 
-  @Column()
+  @Column({ default: 0 })
   charges: number;
 
   @ManyToOne(() => ParkingSpace, (parkingSpace) => parkingSpace.parkingSessions)
