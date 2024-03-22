@@ -12,6 +12,7 @@ import { ParkingCharges } from './entities/parking-charges.entity';
 import { Category, vehicleTypeToCategoryMap } from './model/enum';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
+import { CheckInResponse, CheckOutResponse } from './model/types';
 
 @Injectable()
 export class ParkingSessionService {
@@ -29,7 +30,10 @@ export class ParkingSessionService {
     private dataSource: DataSource,
   ) {}
 
-  async checkIn({ isResident, vehicleType }: CheckInDto) {
+  async checkIn({
+    isResident,
+    vehicleType,
+  }: CheckInDto): Promise<CheckInResponse> {
     const query = {
       isResidenceParking: isResident,
       occupied: false,
@@ -62,7 +66,7 @@ export class ParkingSessionService {
     };
   }
 
-  async checkOut({ parkingSessionId }: CheckOutDto) {
+  async checkOut({ parkingSessionId }: CheckOutDto): Promise<CheckOutResponse> {
     const activeParkingSession = await this.parkingSessionRepository.findOne({
       where: { id: parkingSessionId },
       relations: { parkingSpace: true },
@@ -86,18 +90,28 @@ export class ParkingSessionService {
       where: { category: vehicleChargeCategory },
     });
 
+    let sessionLengthInMinutes;
+    let charge;
     await this.dataSource.transaction(async (entityManager) => {
       const parkingEndTime = new Date();
-      const charge = this.calculateCharges(
+      charge = this.calculateCharges(
         chargesPerHour,
         activeParkingSession.sessionStartDate,
         parkingEndTime,
       );
       activeParkingSession.sessionEndDate = parkingEndTime;
       activeParkingSession.charges = charge;
+      sessionLengthInMinutes = this.getSessionLengthInMinutes(
+        activeParkingSession.sessionStartDate,
+        parkingEndTime,
+      );
       await entityManager.save(ParkingSession, activeParkingSession);
       await entityManager.update(ParkingSpace, { id }, { occupied: false });
     });
+    return {
+      parkingSpaceId: id,
+      sessionLengthInMinutes,
+    };
   }
 
   private calculateCharges(
@@ -110,5 +124,15 @@ export class ParkingSessionService {
     // hours will be rounded up to the higher value e.g. 63 minutes session = 2 hour, 15 min session = 1 hour
     const hours = end.diff(start, 'hour') + 1;
     return hours * chargePerHour;
+  }
+
+  private getSessionLengthInMinutes(
+    sessionStartTime: Date,
+    sessionEndDate: Date,
+  ) {
+    const end = dayjs(sessionEndDate);
+    const start = dayjs(sessionStartTime);
+    const minutes = end.diff(start, 'minutes');
+    return minutes;
   }
 }

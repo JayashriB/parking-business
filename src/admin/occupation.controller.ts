@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { OccupationService } from './occupation.service';
 
-@Controller('/')
+@Controller('/admin/')
 export class OccupationController {
   constructor(private readonly occupationService: OccupationService) {}
 

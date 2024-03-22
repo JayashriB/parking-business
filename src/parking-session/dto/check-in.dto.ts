@@ -1,6 +1,5 @@
-import { Transform } from 'class-transformer';
 import { IsBoolean, IsEnum } from 'class-validator';
-import { VehicleType } from 'src/parking-session/model/enum';
+import { VehicleType } from '../model/enum';
 
 export class CheckInDto {
   @IsEnum(VehicleType)

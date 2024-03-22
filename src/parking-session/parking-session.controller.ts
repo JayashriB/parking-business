@@ -3,7 +3,7 @@ import { ParkingSessionService } from './parking-session.service';
 import { CheckInDto } from './dto/check-in.dto';
 import { CheckOutDto } from './dto/check-out.dto';
 
-@Controller('/')
+@Controller('/user/')
 export class ParkingSessionController {
   constructor(private readonly parkingSessionService: ParkingSessionService) {}
 

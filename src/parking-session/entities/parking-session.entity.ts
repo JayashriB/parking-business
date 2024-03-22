@@ -1,4 +1,3 @@
-import { VehicleType } from 'src/parking-session/model/enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,6 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
+import { VehicleType } from '../model/enum';
 import { ParkingSpace } from './parking-space.entity';
 
 @Entity()
