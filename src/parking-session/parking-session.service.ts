@@ -5,12 +5,16 @@ import {
 } from '@nestjs/common';
 import { CheckInDto } from './dto/check-in.dto';
 import { CheckOutDto } from './dto/check-out.dto';
-import { Repository, EntityManager, DataSource } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { ParkingSession } from './entities/parking-session.entity';
 import { ParkingSpace } from '../parking-space/entities/parking-space.entity';
+import { ParkingCharges } from '../parking-space/entities/parking-charges.entity';
+import {
+  Category,
+  vehicleTypeToCategoryMap,
+} from '../parking-space/model/enum';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
-
 
 @Injectable()
 export class ParkingSessionService {
@@ -20,6 +24,9 @@ export class ParkingSessionService {
 
     @InjectRepository(ParkingSession)
     private parkingSessionRepository: Repository<ParkingSession>,
+
+    @InjectRepository(ParkingCharges)
+    private parkingChargesRepository: Repository<ParkingCharges>,
 
     @InjectEntityManager()
     private dataSource: DataSource,
@@ -43,7 +50,7 @@ export class ParkingSessionService {
     const parkingSession = new ParkingSession();
     parkingSession.parkingSpace = availableParkingSpot;
     parkingSession.vehicleType = vehicleType;
-    
+
     let parkingSessionId;
     await this.dataSource.transaction(async (entityManager) => {
       const { id } = await entityManager.save(ParkingSession, parkingSession);
@@ -58,30 +65,53 @@ export class ParkingSessionService {
     };
   }
 
-  async checkOut({parkingSessionId}: CheckOutDto) {
-    // const activeParkingSession = await this.parkingSessionRepository.findOne({where: { id: parkingSessionId}});
-    // if (!activeParkingSession) throw new BadRequestException(`Checkout: parking session id ${parkingSessionId} does not exist`);
+  async checkOut({ parkingSessionId }: CheckOutDto) {
+    const activeParkingSession = await this.parkingSessionRepository.findOne({
+      where: { id: parkingSessionId },
+      relations: { parkingSpace: true },
+    });
+    if (!activeParkingSession)
+      throw new BadRequestException(
+        `Checkout: parking session id ${parkingSessionId} does not exist!`,
+      );
+    if (activeParkingSession.sessionEndDate)
+      throw new BadRequestException(
+        `Checkout: parking session ${parkingSessionId} has already ended`,
+      );
 
-    // const {isResidenceParking, id: parkingSpaceId, chargePerHour } = activeParkingSession.parkingSpace;
-    // const parkingSpace = await this.parkingSpaceRepository.findOne({where: {id: parkingSpaceId}});
+    const { isResidenceParking, id: parkingSpaceId } =
+      activeParkingSession.parkingSpace;
 
-    // await this.dataSource.transaction(async entityManager => {
-    //   parkingSpace.occupied = false;
-    //   const parkingEndTime = new Date();
-    //   const charge = this.calculateCharges(parkingSpace.chargePerHour, activeParkingSession.sessionStartDate, parkingEndTime);
-    //   activeParkingSession.sessionEndDate = parkingEndTime;
-    //   activeParkingSession.charges = charge;
-    //   await entityManager.save(ParkingSession, activeParkingSession);
-    //   await entityManager.save(ParkingSpace, parkingSpace);
-    // })
+    const vehicleChargeCategory = isResidenceParking
+      ? Category.RESIDENT
+      : vehicleTypeToCategoryMap[activeParkingSession.vehicleType];
 
+    const { chargesPerHour } = await this.parkingChargesRepository.findOne({
+      where: { category: vehicleChargeCategory },
+    });
+
+    await this.dataSource.transaction(async (entityManager) => {
+      const parkingEndTime = new Date();
+      const charge = this.calculateCharges(
+        chargesPerHour,
+        activeParkingSession.sessionStartDate,
+        parkingEndTime,
+      );
+      activeParkingSession.sessionEndDate = parkingEndTime;
+      activeParkingSession.charges = charge;
+      await entityManager.save(ParkingSession, activeParkingSession);
+    });
   }
 
-  private calculateCharges(chargePerHour: number, sessionStartTime: Date, sessionEndDate: Date) {
+  private calculateCharges(
+    chargePerHour: number,
+    sessionStartTime: Date,
+    sessionEndDate: Date,
+  ) {
     const end = dayjs(sessionEndDate);
     const start = dayjs(sessionStartTime);
-    const hours = end.diff(start, 'hour');
+    // hours will be rounded up to the higher value e.g. 63 minutes session = 2 hour, 15 min session = 1 hour
+    const hours = end.diff(start, 'hour') + 1;
     return hours * chargePerHour;
   }
-
 }

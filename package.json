@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "seed": "ts-node src/script/generateParkingSpaceData.ts",
+    "seed": "ts-node src/script/generateParkingSpaceData.ts && ts-node src/script/loadChargesPerCategory.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

@@ -5,7 +5,6 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-import { VehicleType } from '../model/enum';
 import { ParkingSession } from '../../parking-session/entities/parking-session.entity';
 
 @Entity()
