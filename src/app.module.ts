@@ -16,7 +16,7 @@ import { OccupationModule } from './admin/occupation.module';
       password: 'jazz',
       database: 'parking',
       entities: [ParkingSpace, ParkingSession, ParkingCharges],
-      synchronize: process.env.NODE === 'production'? false : true,
+      synchronize: process.env.NODE === 'production' ? false : true,
     }),
     ParkingSessionModule,
     OccupationModule,

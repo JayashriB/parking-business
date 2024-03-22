@@ -17,5 +17,5 @@ export interface OccupiedSpot {
   floorNumber: number;
   spaceNumber: number;
   occupied: boolean;
-  vehicleType: VehicleType;
+  vehicleType?: VehicleType;
 }
