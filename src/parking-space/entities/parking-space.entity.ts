@@ -5,7 +5,7 @@ import {
   OneToMany,
   Index,
 } from 'typeorm';
-import { VehicalType } from '../model/enum';
+import { VehicleType } from '../model/enum';
 import { ParkingSession } from '../../parking-session/entities/parking-session.entity';
 
 @Entity()
@@ -28,9 +28,9 @@ export class ParkingSpace {
 
   @Column({
     type: 'enum',
-    enum: VehicalType,
+    enum: VehicleType,
   })
-  vehicalType: VehicalType;
+  vehicleType: VehicleType;
 
   @Column()
   isResidenceParking: boolean;

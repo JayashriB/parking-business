@@ -1,6 +1,11 @@
-import { VehicalType } from 'src/parking-space/model/enum';
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsEnum } from 'class-validator';
+import { VehicleType } from 'src/parking-space/model/enum';
 
 export class CheckInDto {
-  vehicleType: VehicalType;
+  @IsEnum(VehicleType)
+  vehicleType: VehicleType;
+
+  @IsBoolean()
   isResident: boolean;
 }

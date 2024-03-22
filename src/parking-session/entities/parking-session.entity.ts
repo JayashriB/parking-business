@@ -1,3 +1,4 @@
+import { VehicleType } from 'src/parking-space/model/enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -20,6 +21,12 @@ export class ParkingSession {
 
   @Column({ default: 0 })
   charges: number;
+
+  @Column({
+    type: 'enum',
+    enum: VehicleType,
+  })
+  vehicleType: VehicleType;
 
   @ManyToOne(() => ParkingSpace, (parkingSpace) => parkingSpace.parkingSessions)
   parkingSpace: ParkingSpace;

@@ -9,6 +9,7 @@ import { Repository, EntityManager, DataSource } from 'typeorm';
 import { ParkingSession } from './entities/parking-session.entity';
 import { ParkingSpace } from '../parking-space/entities/parking-space.entity';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { VehicleType } from 'src/parking-space/model/enum';
 
 @Injectable()
 export class ParkingSessionService {
@@ -20,16 +21,15 @@ export class ParkingSessionService {
     private dataSource: DataSource,
   ) {}
 
-  async checkIn(checkInDto: CheckInDto) {
-    // if(checkInDto.isResident && !checkInDto.vehicleType.includes['Any'])
-    //   throw new BadRequestException('Not a legal resident!');
+  async checkIn({ isResident, vehicleType }: CheckInDto) {
+    const query = {
+      isResidenceParking: isResident,
+      occupied: false,
+    };
+    if (!isResident) query['vehicleType'] = vehicleType;
 
     const availableParkingSpot = await this.parkingSpaceRepository.findOne({
-      where: {
-        isResidenceParking: checkInDto.isResident,
-        vehicalType: checkInDto.vehicleType,
-        occupied: false,
-      },
+      where: query,
     });
 
     if (!availableParkingSpot)
@@ -38,6 +38,8 @@ export class ParkingSessionService {
     availableParkingSpot.occupied = true;
     const parkingSession = new ParkingSession();
     parkingSession.parkingSpace = availableParkingSpot;
+    parkingSession.vehicleType = vehicleType;
+    
     let parkingSessionId;
     await this.dataSource.transaction(async (entityManager) => {
       const { id } = await entityManager.save(ParkingSession, parkingSession);

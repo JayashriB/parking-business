@@ -24,7 +24,7 @@ export async function createRandomParkingSpaceRecord() {
       floorNumber: i <= 75 ? 1 : 2,
       spaceNumber: i,
       occupied: false,
-      vehicalType: i <= 50 ? 'Any' : i >= 51 && i <= 130 ? 'Car' : 'Motorcycle',
+      vehicleType: i <= 50 ? 'Any' : i >= 51 && i <= 130 ? 'Car' : 'Motorcycle',
       isResidenceParking: i <= 50,
     });
   }
