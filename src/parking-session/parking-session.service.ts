@@ -9,13 +9,17 @@ import { Repository, EntityManager, DataSource } from 'typeorm';
 import { ParkingSession } from './entities/parking-session.entity';
 import { ParkingSpace } from '../parking-space/entities/parking-space.entity';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { VehicleType } from 'src/parking-space/model/enum';
+import * as dayjs from 'dayjs';
+
 
 @Injectable()
 export class ParkingSessionService {
   constructor(
     @InjectRepository(ParkingSpace)
     private parkingSpaceRepository: Repository<ParkingSpace>,
+
+    @InjectRepository(ParkingSession)
+    private parkingSessionRepository: Repository<ParkingSession>,
 
     @InjectEntityManager()
     private dataSource: DataSource,
@@ -26,7 +30,7 @@ export class ParkingSessionService {
       isResidenceParking: isResident,
       occupied: false,
     };
-    if (!isResident) query['vehicleType'] = vehicleType;
+    if (!isResident) query['allowedVehicleType'] = vehicleType;
 
     const availableParkingSpot = await this.parkingSpaceRepository.findOne({
       where: query,
@@ -51,10 +55,33 @@ export class ParkingSessionService {
       parkingSessionId: parkingSessionId,
       parkingSpaceNumber: availableParkingSpot.spaceNumber,
       parkingFloor: availableParkingSpot.floorNumber,
-    }; //TODO
+    };
   }
 
-  async checkOut(checkOutDto: CheckOutDto) {
-    return `This action returns all parkingSession`;
+  async checkOut({parkingSessionId}: CheckOutDto) {
+    // const activeParkingSession = await this.parkingSessionRepository.findOne({where: { id: parkingSessionId}});
+    // if (!activeParkingSession) throw new BadRequestException(`Checkout: parking session id ${parkingSessionId} does not exist`);
+
+    // const {isResidenceParking, id: parkingSpaceId, chargePerHour } = activeParkingSession.parkingSpace;
+    // const parkingSpace = await this.parkingSpaceRepository.findOne({where: {id: parkingSpaceId}});
+
+    // await this.dataSource.transaction(async entityManager => {
+    //   parkingSpace.occupied = false;
+    //   const parkingEndTime = new Date();
+    //   const charge = this.calculateCharges(parkingSpace.chargePerHour, activeParkingSession.sessionStartDate, parkingEndTime);
+    //   activeParkingSession.sessionEndDate = parkingEndTime;
+    //   activeParkingSession.charges = charge;
+    //   await entityManager.save(ParkingSession, activeParkingSession);
+    //   await entityManager.save(ParkingSpace, parkingSpace);
+    // })
+
   }
+
+  private calculateCharges(chargePerHour: number, sessionStartTime: Date, sessionEndDate: Date) {
+    const end = dayjs(sessionEndDate);
+    const start = dayjs(sessionStartTime);
+    const hours = end.diff(start, 'hour');
+    return hours * chargePerHour;
+  }
+
 }

@@ -11,7 +11,7 @@ import { ParkingSpace } from '../../parking-space/entities/parking-space.entity'
 @Entity()
 export class ParkingSession {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @CreateDateColumn()
   sessionStartDate: Date;

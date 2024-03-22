@@ -12,7 +12,7 @@ import { ParkingSession } from '../../parking-session/entities/parking-session.e
 @Index(['buildingNumber', 'floorNumber', 'spaceNumber'], { unique: true })
 export class ParkingSpace {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   buildingNumber: number;
@@ -26,11 +26,8 @@ export class ParkingSpace {
   @Column()
   occupied: boolean;
 
-  @Column({
-    type: 'enum',
-    enum: VehicleType,
-  })
-  vehicleType: VehicleType;
+  @Column()
+  allowedVehicleType: string;
 
   @Column()
   isResidenceParking: boolean;
